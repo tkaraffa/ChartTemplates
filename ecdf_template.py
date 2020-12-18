@@ -52,11 +52,3 @@ def make_cdf_chart(df):
                                  text=[q, q],
                                  textposition=['middle left', 'middle right']))
     fig.show()
-
-
-import pandas as pd
-
-dataframe = pd.read_csv('/Users/tomkaraffa/Downloads/coffee-quality-database-master/data/arabica_data_cleaned.csv')
-metrics = ['Aroma', 'Flavor',  'Acidity', 'Body', 'Balance', 'Aftertaste']
-make_cdf_chart(dataframe[metrics])
-
