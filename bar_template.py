@@ -34,7 +34,11 @@ def make_bar_chart(dataframe, categories, metrics, segments):
 					textposition='auto'))
 			fig.show()
 
+# the comparison of two different dataframes can be done with some fancy subsetting and then appending, using
+# the dataframe of origin as the segment, but then using any further segments would treat the appended data as a
+# single data source.
 
+# to do: add segments to the following function
 def make_bar_chart_mult_sources(dataframes, categories, metrics):
 	# shows bar chart visualizations of rate of each category (count) & metric (mean), compared between two different
 	# data sets. Can be two slices of the same dataframe.
