@@ -1,37 +1,40 @@
-def make_bar_chart(dataframe, categories, metrics, segments):
+def make_bar_chart(dataframes, names, categories, metrics, segments):
 	# shows bar chart visualizations of rate of each category (count) & metric (mean)
-	# dataframe: overall pandas dataframe
-	# categories: list of column names with categorical data
-	# metrics: list of column names with numeric data
-	# segments: list of column names to group by
+	# dataframe: list of dataframes, or list of subset of dataframes
+	# names: list of names in string format that correspond to dataframes
+	# categories: list of column names in string format with categorical data
+	# metrics: list of column names in string format with numeric data
+	# segments: list of column names in string format to group by
 	import plotly.graph_objects as go
 	import pandas as pd
 
 	for segment in segments:
-		for column in metrics:
-			fig = go.Figure(layout={'title': column, 'yaxis_title': 'mean', 'legend_title': segment})
-			chart_data = dataframe.groupby(segment)[column].mean()
-			chart_data.index = chart_data.index.astype(str)
-			for i in chart_data.index.astype(str):
-				fig.add_trace(go.Bar(
-					x=[''],
-					y=[chart_data.loc[i]],
-					name=i,
-					hoverinfo='none',
-					text=f'{100 * chart_data.loc[i]:.1f}%',
-					textposition='auto'))
+		for metric in metrics:
+			fig = go.Figure(layout={'title': metric, 'yaxis_title': 'mean', 'legend_title': segment})
+			for name, (df_index, dataframe) in zip(names, enumerate(dataframes)):
+				chart_data = dataframe.groupby(segment)[metric].mean()
+				chart_data.index = chart_data.index.astype(str)
+				for i in chart_data.index.astype(str):
+					fig.add_trace(go.Bar(
+						x=[''],
+						y=[chart_data.loc[i]],
+						name=f'{name}: {i}',
+						hoverinfo='none',
+						text=f'{100 * chart_data.loc[i]:.1f}%',
+						textposition='auto'))
 			fig.show()
-		for column in categories:
-			fig = go.Figure(layout={'title': column, 'yaxis_title': 'rate', 'legend_title': segment})
-			chart_data = dataframe.groupby(segment)[column].value_counts(normalize=True).unstack()
-			for i in chart_data.index:
-				fig.add_trace(go.Bar(
-					x=chart_data.loc[i].index.astype(str),
-					y=chart_data.loc[i].values,
-					name=i,
-					hoverinfo='none',
-					text=[f'{100 * value:.1f}%' for value in chart_data.loc[i].values],
-					textposition='auto'))
+		for category in categories:
+			fig = go.Figure(layout={'title': category, 'yaxis_title': 'rate', 'legend_title': segment})
+			for name, (df_index, dataframe) in zip(names, enumerate(dataframes)):
+				chart_data = dataframe.groupby(segment)[category].value_counts(normalize=True).unstack()
+				for i in chart_data.index:
+					fig.add_trace(go.Bar(
+						x=chart_data.loc[i].index.astype(str),
+						y=chart_data.loc[i].values,
+						name=f'{name}: {i}',
+						hoverinfo='none',
+						text=[f'{100 * value:.1f}%' for value in chart_data.loc[i].values],
+						textposition='auto'))
 			fig.show()
 
 # the comparison of two different dataframes can be done with some fancy subsetting and then appending, using

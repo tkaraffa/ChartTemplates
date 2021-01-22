@@ -1,0 +1,5 @@
+to do for all
+
+standardization:
+    - all should take one list of dataframes, to be able to compare on the same graph
+    - add
